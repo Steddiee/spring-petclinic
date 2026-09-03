@@ -43,6 +43,20 @@ docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
 The pipeline handles compilation, testing, and Docker image packaging.
 
+## How to Run the Application
+
+### Using the Exported Docker Image Archive
+
+If you received the `spring-petclinic-image.tar` deliverable file, load and run it directly:
+
+```bash
+# 1. Load the image tar archive into Docker
+docker load -i spring-petclinic-image.tar
+
+# 2. Run the container
+docker run -d -p 8080:8080 --name petclinic-app spring-petclinic:latest
+```
+
 # Spring PetClinic Sample Application [![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml)[![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml)
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/spring-projects/spring-petclinic) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=7517918)

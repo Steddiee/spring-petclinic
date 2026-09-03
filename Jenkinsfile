@@ -22,16 +22,29 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Package Application') {
             steps {
                 sh 'chmod +x mvnw'
-                sh './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=spring-petclinic:latest'
+                sh './mvnw package -DskipTests'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t spring-petclinic:latest .'
+            }
+        }
+
+        stage('Export Docker Image Archive') {
+            steps {
+                sh 'docker save -o spring-petclinic-image.tar spring-petclinic:latest'
             }
         }
     }
 
     post {
         always {
+            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
             cleanWs()
         }
         success {
