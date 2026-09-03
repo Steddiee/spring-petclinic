@@ -38,6 +38,7 @@ pipeline {
         stage('Export Docker Image Archive') {
             steps {
                 sh 'docker save -o spring-petclinic-image.tar spring-petclinic:latest'
+                archiveArtifacts artifacts: 'spring-petclinic-image.tar', fingerprint: true
             }
         }
     }

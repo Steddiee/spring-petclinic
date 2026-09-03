@@ -11,6 +11,8 @@ This repository includes a complete CI/CD pipeline for the Spring PetClinic samp
 
 ```bash
 # Jenkins in Docker
+docker build --build-arg DOCKER_GID=$(stat -c '%g' /var/run/docker.sock) -t jenkins-dood -f Dockerfile.jenkins .
+
 docker run -d \
   --name jenkins \
   --restart unless-stopped \
@@ -18,17 +20,12 @@ docker run -d \
   -p 50000:50000 \
   -v jenkins_home:/var/jenkins_home \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -u root \
-  jenkins/jenkins:lts
+  jenkins-dood
 
 # Get initial admin password:
 docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
-# Open http://localhost:8081, follow setup wizard install suggested plugins
+# Open http://localhost:8081, follow setup wizard install suggested plugins and create admin user
 ```
-
-- create admin user
-- install Docker pipeline plugin
-- restart jenkins docker container
 
 ## Running the Pipeline
 

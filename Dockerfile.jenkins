@@ -1,0 +1,15 @@
+FROM jenkins/jenkins:lts
+
+USER root
+
+ARG DOCKER_GID
+
+# Copy official static Docker CLI binary directly into system PATH
+COPY --from=docker:cli /usr/local/bin/docker /usr/local/bin/docker
+
+# Map host socket GID and add jenkins user to the group
+RUN (groupadd -g ${DOCKER_GID} docker-host 2>/dev/null || \
+     groupmod -n docker-host $(getent group ${DOCKER_GID} | cut -d: -f1) 2>/dev/null || true) && \
+    usermod -aG ${DOCKER_GID} jenkins 2>/dev/null || true
+
+USER jenkins
