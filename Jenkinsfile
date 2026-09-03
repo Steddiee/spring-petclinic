@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_BUILDKIT = '1'
-    }
-
     options {
         timestamps()
         timeout(time: 30, unit: 'MINUTES')
