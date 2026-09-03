@@ -44,12 +44,15 @@ pipeline {
         }
 
         stage('Run Tests') {
+            environment {
+                SPRING_DOCKER_COMPOSE_SKIP_IN_TESTS = 'true'
+            }
             steps {
                 script {
                     if (env.USE_JFROG == "true") {
-                        sh 'jf mvn test -Dspring.docker.compose.skip.in-tests=true'
+                        sh 'jf mvn test'
                     } else {
-                        sh 'chmod +x mvnw && ./mvnw test -Dspring.docker.compose.skip.in-tests=true'
+                        sh 'chmod +x mvnw && ./mvnw test'
                     }
                 }
             }

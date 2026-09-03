@@ -2,12 +2,15 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Copy official static Docker CLI binary directly into system PATH
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gosu && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY --from=docker:cli /usr/local/bin/docker /usr/local/bin/docker
 
 RUN curl -fL https://install-cli.jfrog.io | sh && chmod +x /usr/local/bin/jf
 
-# Create dedicated docker group and add jenkins user
-RUN groupadd -g 999 docker && usermod -aG docker jenkins
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-USER jenkins
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
