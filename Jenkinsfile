@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_BUILDKIT = '1'
+    }
+
     options {
         timestamps()
         timeout(time: 30, unit: 'MINUTES')
@@ -34,13 +38,10 @@ pipeline {
                     // Save state for subsequent stages
                     env.USE_JFROG = hasJfrog ? "true" : "false"
 
-                    // Execute compile step
-
                     if (env.USE_JFROG == "true") {
                         sh 'jf mvn clean compile'
                     } else {
-                        sh 'chmod +x mvnw'
-                        sh './mvnw clean compile'
+                        sh 'chmod +x mvnw && ./mvnw clean compile'
                     }
                 }
             }
@@ -50,10 +51,9 @@ pipeline {
             steps {
                 script {
                     if (env.USE_JFROG == "true") {
-                        sh 'jf mvn test'
+                        sh 'jf mvn test -Dspring.docker.compose.skip.in-tests=true'
                     } else {
-                        sh 'chmod +x mvnw'
-                        sh './mvnw test'
+                        sh 'chmod +x mvnw && ./mvnw test -Dspring.docker.compose.skip.in-tests=true'
                     }
                 }
             }
@@ -65,8 +65,7 @@ pipeline {
                     if (env.USE_JFROG == "true") {
                         sh 'jf mvn package -DskipTests'
                     } else {
-                        sh 'chmod +x mvnw'
-                        sh './mvnw package -DskipTests'
+                        sh 'chmod +x mvnw && ./mvnw package -DskipTests'
                     }
                 }
             }

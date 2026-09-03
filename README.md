@@ -16,6 +16,7 @@ This repository includes a complete CI/CD pipeline for the Spring PetClinic samp
 
 ## Prerequisites
 
+Runs on Linux, MacOS, and Windows with WSL 2
 - `git`
 - `docker`
 
@@ -32,7 +33,7 @@ The provided `Dockerfile.jenkins` extracts static `docker` and `jf` binaries fro
 
 ```bash
 # 1. Build image with dynamic GID matching
-docker build --build-arg DOCKER_GID=$(stat -c '%g' /var/run/docker.sock) -t jenkins-dood -f Dockerfile.jenkins .
+docker build -t jenkins-dood -f Dockerfile.jenkins .
 
 # 2. (Optional) Ensure volume permissions match non-root jenkins user UID 1000
 docker run --rm -v jenkins_home:/var/jenkins_home alpine chown -R 1000:1000 /var/jenkins_home
