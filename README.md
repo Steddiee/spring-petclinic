@@ -8,6 +8,7 @@ This repository includes a complete CI/CD pipeline for the Spring PetClinic samp
 
 - **Multi-Stage Containerization:** Built with an initial JDK stage for compilation and an unprivileged Alpine JRE runtime to minimize attack surface and image size.
 - **Non-Root Execution:** Runs Jenkins as an unprivileged user (`jenkins`) by dynamically mapping container group permissions to the host's `/var/run/docker.sock` GID.
+- **Native JFrog Integration:** Bundles the official `jf` CLI directly into the runner image using multi-stage builds (`releases-docker.jfrog.io/jfrog/jfrog-cli-v2-jf`), enabling artifact and build-info publishing to JFrog Artifactory / JFrog Cloud.
 - **Zero Plugin Overhead:** Uses native Groovy pipeline logic and standard shell executions, removing strict dependencies on third-party Jenkins plugins.
 - **Artifact Archiving:** Generates test reports via JUnit and exposes the final compiled Docker image tarball (`spring-petclinic-image.tar`) directly in the Jenkins UI.
 
@@ -22,10 +23,12 @@ This repository includes a complete CI/CD pipeline for the Spring PetClinic samp
 
 To run this `Jenkinsfile` on an external Jenkins or remote agent:
 
-1. **Docker CLI Installed:** The agent executing the job must have the `docker` CLI binary in its standard `PATH`.
+1. **Docker & JFrog CLIs Installed:** The agent executing the job must have `docker` and `jf` binaries in its standard `PATH`.
 2. **Socket Access (DooD):** The Jenkins agent user requires read/write access to `/var/run/docker.sock`.
 
 ### Option 2: New Jenkins Container (Docker outside of Docker) Setup
+
+The provided `Dockerfile.jenkins` extracts static `docker` and `jf` binaries from their official registry images and handles non-root socket permissions dynamically.
 
 ```bash
 # 1. Build image with dynamic GID matching
@@ -49,6 +52,15 @@ docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
 # Open http://localhost:8081, follow setup wizard
 ```
+
+## Jenkins Credentials Setup (Optional - for JFrog Cloud)
+
+To enable JFrog Cloud dependency resolution, add the following global credentials in Jenkins (Manage Jenkins -> Credentials):
+
+- jfrog-url (Secret text): JFrog instance URL (e.g., https://<your-org>.jfrog.io).
+- jfrog-access-token (Secret text): Identity token generated from JFrog User Profile -> Access Tokens.
+
+_Note: If these credentials are missing, the pipeline automatically bypasses JFrog steps and resolves dependency through Maven._
 
 ## Running the Pipeline
 
