@@ -9,7 +9,7 @@ RUN chmod +x mvnw
 RUN ./mvnw package -DskipTests
 
 # Stage 2: Run with JRE
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
