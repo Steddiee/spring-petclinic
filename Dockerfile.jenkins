@@ -8,6 +8,9 @@ RUN apt-get update && \
 
 COPY --from=docker:cli /usr/local/bin/docker /usr/local/bin/docker
 
+RUN mkdir -p /usr/local/lib/docker/cli-plugins
+COPY --from=docker/compose-bin:v2.24.7 /docker-compose /usr/local/lib/docker/cli-plugins/docker-compose
+
 RUN curl -fL https://install-cli.jfrog.io | sh && chmod +x /usr/local/bin/jf
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
